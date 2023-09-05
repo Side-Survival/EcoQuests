@@ -22,6 +22,6 @@ class TaskTemplate(
         ViolationContext(plugin, "task $id on-complete")
     )
 
-    fun create(quest: Quest, xpExpr: String) =
-        Task(plugin, this, quest, xpExpr)
+    fun create(quest: Quest, xpExpr: String, order: Int) =
+        Task(plugin, this, quest, xpExpr, order)
 }

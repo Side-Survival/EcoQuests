@@ -26,6 +26,7 @@ import com.willfp.ecoquests.util.randomlyPick
 import com.willfp.libreforge.EmptyProvidedHolder
 import com.willfp.libreforge.ViolationContext
 import com.willfp.libreforge.conditions.Conditions
+import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
 import org.bukkit.Bukkit
@@ -80,7 +81,11 @@ class Quest(
     private val availableTasks = config.getSubsections("tasks")
         .mapNotNull {
             Tasks[it.getString("task")]
-                ?.create(this, it.getString("xp"))
+                ?.create(
+                    this,
+                    it.getString("xp"),
+                    it.getInt("order")
+                )
         }
 
     // The amount of tasks to use from the pool
@@ -374,10 +379,11 @@ class Quest(
             val split = s.split(":")
             val taskId = split[0]
             val xpExpr = split[1]
+            val order = split[2].toInt()
 
             val template = Tasks[taskId] ?: continue
 
-            savedTasks += template.create(this, xpExpr)
+            savedTasks += template.create(this, xpExpr, order)
         }
 
         return savedTasks
@@ -385,7 +391,7 @@ class Quest(
 
     private fun saveTasks() {
         val serialized = tasks.map {
-            "${it.template.id}:${it.xpExpr}"
+            "${it.template.id}:${it.xpExpr}:${it.order}"
         }
 
         ServerProfile.load().write(savedTasksKey, serialized)
@@ -435,7 +441,8 @@ class Quest(
                 rewardMessages
                     .addMargin(margin)
             } else if (s.contains("%tasks%")) {
-                tasks.map { task -> task.getCompletedDescription(player) }
+                tasks.sortedBy { task -> task.order }
+                    .map { task -> task.getCompletedDescription(player) }
                     .addMargin(margin)
             } else if (s.contains("%description%")) {
                 getDescription(player)

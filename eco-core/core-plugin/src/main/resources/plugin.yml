@@ -17,6 +17,8 @@ commands:
     aliases:
       - q
       - quest
+      - uzd
+      - uzdevumi
     description: Open the quests menu
     permission: ecoquests.command.quests
 

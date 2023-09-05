@@ -8,7 +8,6 @@ import com.willfp.eco.core.placeholder.PlayerPlaceholder
 import com.willfp.eco.core.placeholder.context.placeholderContext
 import com.willfp.eco.util.evaluateExpression
 import com.willfp.eco.util.formatEco
-import com.willfp.eco.util.lineWrap
 import com.willfp.eco.util.toNiceString
 import com.willfp.ecoquests.api.event.PlayerTaskCompleteEvent
 import com.willfp.ecoquests.api.event.PlayerTaskExpGainEvent
@@ -24,7 +23,8 @@ class Task(
     private val plugin: EcoPlugin,
     val template: TaskTemplate,
     val quest: Quest,
-    internal val xpExpr: String
+    internal val xpExpr: String,
+    internal val order: Int
 ) {
     private val xpKey = PersistentDataKey(
         plugin.createNamespacedKey("${quest.id}_task_${template.id}_xp"),
@@ -88,6 +88,7 @@ class Task(
 
     fun reset(player: OfflinePlayer) {
         player.profile.write(xpKey, 0.0)
+        player.profile.write(xpRequiredKey, 0.0)
         player.profile.write(hasCompletedKey, false)
     }
 
@@ -145,6 +146,9 @@ class Task(
      * Give experience directly
      */
     fun giveExperience(player: Player, amount: Double) {
+        if (player.profile.read(hasCompletedKey))
+            return
+
         val requiredXp = getExperienceRequired(player)
         val newXp = player.profile.read(xpKey) + amount
 

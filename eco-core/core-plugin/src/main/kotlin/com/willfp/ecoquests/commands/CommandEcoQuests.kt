@@ -14,6 +14,7 @@ class CommandEcoQuests(plugin: EcoPlugin) : PluginCommand(
         this.addSubcommand(CommandReload(plugin))
             .addSubcommand(CommandStart(plugin))
             .addSubcommand(CommandResetPlayer(plugin))
+            .addSubcommand(CommandGiveTaskXp(plugin))
             .addSubcommand(CommandReset(plugin))
     }
 
