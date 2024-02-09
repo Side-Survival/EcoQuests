@@ -16,7 +16,9 @@ class CommandQuests(plugin: EcoPlugin) : PluginCommand(
     override fun getAliases(): List<String> {
         return listOf(
             "q",
-            "quest"
+            "quest",
+            "uzd",
+            "uzdevumi"
         )
     }
 

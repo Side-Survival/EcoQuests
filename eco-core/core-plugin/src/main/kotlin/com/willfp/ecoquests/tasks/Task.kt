@@ -47,7 +47,7 @@ class Task(
     private val xpGainMethods = template.xpGainMethods.map { it.clone() }
 
     private val accumulator = object : Accumulator {
-        override fun accept(player: Player, count: Double) {
+        override fun accept(player: Player, count: Double, extra: Double) {
             if (!quest.hasActive(player)) {
                 return
             }
@@ -146,8 +146,10 @@ class Task(
      * Give experience directly
      */
     fun giveExperience(player: Player, amount: Double) {
+        println("running give experience1 ${template.id}")
         if (player.profile.read(hasCompletedKey))
             return
+        println("running give experience2 ${template.id}")
 
         val requiredXp = getExperienceRequired(player)
         val newXp = player.profile.read(xpKey) + amount
