@@ -29,6 +29,7 @@ import com.willfp.libreforge.conditions.Conditions
 import com.willfp.libreforge.effects.Chain
 import com.willfp.libreforge.effects.Effects
 import com.willfp.libreforge.effects.executors.impl.NormalExecutorFactory
+import com.willfp.libreforge.toDispatcher
 import org.bukkit.Bukkit
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
@@ -59,7 +60,7 @@ class Quest(
             )
 
             addLoreLines(
-                startConditions.getNotMetLines(player, EmptyProvidedHolder)
+                startConditions.getNotMetLines(player.toDispatcher(), EmptyProvidedHolder)
             )
 
             setDisplayName(
@@ -262,7 +263,7 @@ class Quest(
     }
 
     fun meetsStartConditions(player: Player): Boolean {
-        return startConditions.areMet(player, EmptyProvidedHolder)
+        return startConditions.areMet(player.toDispatcher(), EmptyProvidedHolder)
     }
 
     fun shouldStart(player: Player): Boolean {
@@ -287,7 +288,7 @@ class Quest(
             return
         }
 
-        startEffects?.trigger(player)
+        startEffects?.trigger(player.toDispatcher())
         player.profile.write(hasStartedKey, true)
         player.profile.write(startedTimeKey, currentTimeMinutes)
 
@@ -414,7 +415,7 @@ class Quest(
     private fun complete(player: Player) {
         player.profile.write(hasCompletedKey, true)
         player.profile.write(completedTimeKey, currentTimeMinutes)
-        rewards?.trigger(player)
+        rewards?.trigger(player.toDispatcher())
 
         Bukkit.getPluginManager().callEvent(PlayerQuestCompleteEvent(player, this))
     }
